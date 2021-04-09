@@ -1,0 +1,80 @@
+﻿@using HW4._7._21QASite.Data;
+@model ViewQuestionViewModel
+
+<div class="container">
+    <main role="main" class="pb-3" style="margin-top: 80px;">
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2 jumbotron">
+                <h2>@Model.Question.Title</h2>
+                <hr />
+                <p>@Model.Question.QuestionDescription</p>
+                <hr />
+                <span>Asked by NEED TO INSERT PERSON NAME HERE</span>
+                on
+                <span>@Model.Question.DatePosted.ToLongDateString()</span>
+                <br />
+                <span>Tags:</span>
+                <span class="badge badge-primary">NEED TO UPDATE THESE TAGS</span>
+                <span class="badge badge-primary">HERE</span>
+                <br />
+                @*NEED TO UPDATE THE LIKES TO UPDATE AUTOMATICALLY VIA AJAX REQUESTS*@
+                <span>Likes: </span> <span data-question-id="7" id="likes-count">@Model.Question.Likes</span>
+                <br />
+                @*NEED TO ADD THE CSS TO SHOW THE GRAY HEART TURNED RED (OR LOOK INTO GOOGLE EMPTY/FILLED IN)*@
+                <span style="font-size: 25px;cursor: pointer;" class="oi oi-heart" id="like-question" data-question-id="@Model.Question.Id"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h3>Answers:</h3>
+            </div>
+        </div>
+
+        @if (Model.Question.Answers.Count == 0)
+        {
+            <div class="row">
+                <div class="col-md-8 offset-md-2 card card-body bg-light">
+                    <h3>No answers yet, be the first to submit one!</h3>
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (Answer answer in Model.Question.Answers)
+            {
+                <div class="row mt-1">
+                    <div class="col-md-8 offset-md-2 card card-body bg-light">
+                        <div>@answer.Text</div>
+                        <br />
+                        <span>
+                            Answered by NEED TO REPACE WITH THE PERSON WHO ANSWERED NAME
+                            on @answer.DateAnswered.ToLongDateString()
+                        </span>
+                        <hr />
+                    </div>
+                </div>
+            }
+        }
+
+
+
+
+        @*This whole div needs to be in an if statement - ONLY IF THE USER IS LOGGED IN CAN THEY SEE IT*@
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2 card card-body bg-light mt-4">
+                <h2>Submit an answer</h2>
+                <form method="post" action="/questions/addanswer">
+                    <input type="hidden" name="questionid" value="@Model.Question.Id" />
+                    <textarea class="form-control" placeholder="Type your answer here..." rows="10" name="text"></textarea>
+                    <br />
+                    <button class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+
+
+    </main>
+</div>

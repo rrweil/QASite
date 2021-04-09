@@ -1,0 +1,49 @@
+﻿@using HW4._7._21QASite.Data;
+@model IndexViewModel;
+
+<div class="container">
+    <main role="main" class="pb-3" style="margin-top: 80px;">
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                @foreach (Question question in Model.Questions)
+                {
+                    <div class="card card-body bg-light">
+                        <h4>
+                            <a href="/questions/viewquestion?id=@question.Id">
+                                @question.Title
+                            </a>
+                        </h4>
+                        <div>
+                            @*test if it's not supposed to show the word tags if there are no tags*@
+                            <span>Tags:</span>
+                            @foreach (QuestionsTags questionTag in question.QuestionsTags)
+                            {
+                                <span class="badge badge-primary">@questionTag.Tag.Name</span>
+                            }
+                        </div>
+                        <div style="margin-top: 10px;">
+                            @*fix this up and make it a ternery operator?*@ 
+                            @if (question.QuestionDescription.Length > 200)
+                            {
+                                @question.QuestionDescription.Substring(0, 200)
+                                <text>...</text>
+
+                            }
+                            else
+                            {
+                                @question.QuestionDescription
+                            }
+                        </div>
+                        <span>Likes: @question.Likes</span>
+                        <br />
+                        <span>@question.Answers.Count answer(s)</span>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+
+    </main>
+</div>
