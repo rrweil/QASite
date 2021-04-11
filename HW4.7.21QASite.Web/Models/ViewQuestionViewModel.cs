@@ -10,5 +10,6 @@ namespace HW4._7._21QASite.Web.Models
     {
         public Question Question { get; set; }
         public string AskedBy { get; set; }
+        public bool CanLike { get; set; }
     }
 }

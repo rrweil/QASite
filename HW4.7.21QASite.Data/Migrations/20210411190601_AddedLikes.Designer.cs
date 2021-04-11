@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HW4._7._21QASite.Data.Migrations
 {
     [DbContext(typeof(QuestionsTagsContext))]
-    [Migration("20210409062852_AddedAnswerDate")]
-    partial class AddedAnswerDate
+    [Migration("20210411190601_AddedLikes")]
+    partial class AddedLikes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,11 +37,36 @@ namespace HW4._7._21QASite.Data.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Answers");
+                });
+
+            modelBuilder.Entity("HW4._7._21QASite.Data.Likes", b =>
+                {
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("QuestionId", "UserId");
+
+                    b.HasIndex("TagId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("HW4._7._21QASite.Data.Question", b =>
@@ -53,9 +78,6 @@ namespace HW4._7._21QASite.Data.Migrations
 
                     b.Property<DateTime>("DatePosted")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
 
                     b.Property<string>("QuestionDescription")
                         .HasColumnType("nvarchar(max)");
@@ -101,6 +123,27 @@ namespace HW4._7._21QASite.Data.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("HW4._7._21QASite.Data.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("HW4._7._21QASite.Data.Answer", b =>
                 {
                     b.HasOne("HW4._7._21QASite.Data.Question", "Question")
@@ -109,7 +152,38 @@ namespace HW4._7._21QASite.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HW4._7._21QASite.Data.User", "User")
+                        .WithMany("Answers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Question");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HW4._7._21QASite.Data.Likes", b =>
+                {
+                    b.HasOne("HW4._7._21QASite.Data.Question", "Question")
+                        .WithMany("Likes")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HW4._7._21QASite.Data.Tag", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("TagId");
+
+                    b.HasOne("HW4._7._21QASite.Data.User", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HW4._7._21QASite.Data.QuestionsTags", b =>
@@ -135,12 +209,23 @@ namespace HW4._7._21QASite.Data.Migrations
                 {
                     b.Navigation("Answers");
 
+                    b.Navigation("Likes");
+
                     b.Navigation("QuestionsTags");
                 });
 
             modelBuilder.Entity("HW4._7._21QASite.Data.Tag", b =>
                 {
+                    b.Navigation("Likes");
+
                     b.Navigation("QuestionsTags");
+                });
+
+            modelBuilder.Entity("HW4._7._21QASite.Data.User", b =>
+                {
+                    b.Navigation("Answers");
+
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

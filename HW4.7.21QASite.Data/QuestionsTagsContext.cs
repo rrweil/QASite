@@ -18,6 +18,8 @@ namespace HW4._7._21QASite.Data
         public DbSet<Answer> Answers { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Likes> Likes { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connectionString);
@@ -43,6 +45,24 @@ namespace HW4._7._21QASite.Data
                 .HasOne(qt => qt.Tag)
                 .WithMany(t => t.QuestionsTags)
                 .HasForeignKey(q => q.TagId);
+
+            //set up composite primary key
+            modelBuilder.Entity<Likes>()
+                .HasKey(l => new { l.QuestionId, l.UserId });
+
+            //set up foreign key from QuestionsTags to Questions
+            modelBuilder.Entity<Likes>()
+                .HasOne(l => l.Question)
+                .WithMany(q => q.Likes)
+                .HasForeignKey(q => q.QuestionId);
+
+            //set up foreign key from QuestionsTags to Tags
+            modelBuilder.Entity<Likes>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(q => q.UserId);
         }
+
+
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HW4._7._21QASite.Data.Migrations
 {
     [DbContext(typeof(QuestionsTagsContext))]
-    [Migration("20210409052035_FixedAnswersTable")]
-    partial class FixedAnswersTable
+    [Migration("20210411184711_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,15 +28,23 @@ namespace HW4._7._21QASite.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("DateAnswered")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Answers");
                 });
@@ -98,15 +106,44 @@ namespace HW4._7._21QASite.Data.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("HW4._7._21QASite.Data.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashPassword")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("HW4._7._21QASite.Data.Answer", b =>
                 {
-                    b.HasOne("HW4._7._21QASite.Data.Question", "question")
+                    b.HasOne("HW4._7._21QASite.Data.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("question");
+                    b.HasOne("HW4._7._21QASite.Data.User", "User")
+                        .WithMany("Answers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HW4._7._21QASite.Data.QuestionsTags", b =>
@@ -138,6 +175,11 @@ namespace HW4._7._21QASite.Data.Migrations
             modelBuilder.Entity("HW4._7._21QASite.Data.Tag", b =>
                 {
                     b.Navigation("QuestionsTags");
+                });
+
+            modelBuilder.Entity("HW4._7._21QASite.Data.User", b =>
+                {
+                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

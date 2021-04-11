@@ -44,6 +44,7 @@ namespace HW4._7._21QASite.Web.Models
                 new ClaimsIdentity(claims, "Cookies", "user", "role"))).Wait();
 
             return Redirect("/home/index");
+
         }
 
         public IActionResult Signup()

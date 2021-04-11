@@ -39,6 +39,7 @@ namespace HW4._7._21QASite.Web.Controllers
             var vm = new ViewQuestionViewModel();
             vm.Question = repo.GetQuestionById(id);
             vm.AskedBy = repo.GetUserNameById(vm.Question.UserId);
+            vm.CanLike = repo.CanLike(id, GetCurrentUserId().Value);
             return View(vm);
         }
 
@@ -46,9 +47,30 @@ namespace HW4._7._21QASite.Web.Controllers
         {
             var repo = new QuestionsRepository(_connectionString);
             answer.DateAnswered = DateTime.Now;
+            answer.UserId = GetCurrentUserId().Value;
             repo.AddAnswer(answer);
             return this.RedirectToAction
-  ("ViewQuestion", new { id = $"{answer.QuestionId}" });
+            ("ViewQuestion", new { id = $"{answer.QuestionId}" });
+        }
+
+        [HttpPost]
+        public IActionResult AddLike(int questionId)
+        {
+            var repo = new QuestionsRepository(_connectionString);
+            var user = repo.GetByEmail(User.Identity.Name);
+            var like = new Likes()
+            {
+                UserId = user.Id,
+                QuestionId = questionId
+            };
+            repo.AddLikes(like);
+            return Json(null);
+        }
+
+        public IActionResult GetLikes(int questionId)
+        {
+            var repo = new QuestionsRepository(_connectionString);
+            return Json(repo.GetLikes(questionId));
         }
 
         private int? GetCurrentUserId()
@@ -67,6 +89,8 @@ namespace HW4._7._21QASite.Web.Controllers
 
             return user.Id;
         }
+
+
         
     }
 }

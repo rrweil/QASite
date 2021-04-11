@@ -20,7 +20,7 @@ namespace HW4._7._21QASite.Data
             return ctx.Tags.FirstOrDefault(t => t.Name == name);
         }
 
-        public int AddTag (string name)
+        public int AddTag(string name)
         {
             var ctx = new QuestionsTagsContext(_connectionString);
             ctx.Tags.Add(new Tag
@@ -41,7 +41,7 @@ namespace HW4._7._21QASite.Data
             {
                 Tag t = GetTag(tag);
                 int tagId;
-                if(t == null)
+                if (t == null)
                 {
                     tagId = AddTag(tag);
                 }
@@ -63,6 +63,7 @@ namespace HW4._7._21QASite.Data
         {
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Questions
+                .Include(q => q.Likes)
                 .Include(q => q.Answers)
                 .Include(q => q.QuestionsTags)
                 .ThenInclude(qt => qt.Tag)
@@ -74,10 +75,12 @@ namespace HW4._7._21QASite.Data
         {
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Questions
-                //.Include(q => q.Answers)
-                //.ThenInclude (a => a.User)
+                .Include(q => q.Likes)
+                .ThenInclude(l => l.Question)
+                .Include(q => q.Answers)
+                .ThenInclude(a => a.User)
                 .Include(q => q.QuestionsTags)
-                .ThenInclude (qt => qt.Tag)
+                .ThenInclude(qt => qt.Tag)
                 .FirstOrDefault(q => q.Id == id);
         }
 
@@ -107,7 +110,7 @@ namespace HW4._7._21QASite.Data
             return isValid ? user : null;
         }
 
-        public User GetByEmail (string email)
+        public User GetByEmail(string email)
         {
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Users.FirstOrDefault(u => u.Email == email);
@@ -118,5 +121,29 @@ namespace HW4._7._21QASite.Data
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Users.Where(u => u.Id == id).Select(u => u.Name).FirstOrDefault();
         }
+
+        public void AddLikes(Likes like)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            ctx.Likes.Add(like);
+            ctx.SaveChanges();
+        }
+
+        public int GetLikes(int questionId)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            return ctx.Likes.Where(l => l.QuestionId == questionId).Count();
+        }
+
+        public bool CanLike(int questionId, int userId)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            return !ctx.Likes.Contains(new Likes()
+            {
+                UserId = userId,
+                QuestionId = questionId,
+            }); ;
+        }
     }
+
 }

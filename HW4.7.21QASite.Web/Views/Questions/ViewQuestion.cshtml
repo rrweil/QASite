@@ -23,9 +23,24 @@
                     }
                 }
                 <br />
-                <span>Likes: </span> <span data-question-id="7" id="likes-count">@Model.Question.Likes</span>
+                <span>Likes: </span> <span data-question-id="@Model.Question.Id" id="likes-count">@Model.Question.Likes.Count</span>
                 <br />
-                <span style="font-size: 30px;cursor: pointer;" class="oi oi-heart" id="like-question" data-question-id="@Model.Question.Id"></span>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @if (Model.CanLike)
+                    {
+                        <span style="font-size: 30px;cursor: pointer;" class="oi oi-heart" id="like-question" data-question-id="@Model.Question.Id"></span>
+
+                    }
+                    else
+                    {
+                        <span style="font-size: 30px;" class="oi oi-heart text-danger" id="already-liked-question" data-question-id="@Model.Question.Id"></span>
+
+                    }
+                }
+
+
             </div>
         </div>
         <div class="row">
@@ -52,7 +67,7 @@
                         <br />
                         <span>
                             @*need to update name*@
-                            Answered by NEED TO UPDATE
+                            Answered by @answer.User.Name
                             on @answer.DateAnswered.ToLongDateString()
                         </span>
                         <hr />
@@ -79,6 +94,10 @@
 
     </main>
 </div>
+
+@section Scripts{
+    <script src="~/js/ViewQuestion.js"></script>
+}
 
 
 @section Styles{

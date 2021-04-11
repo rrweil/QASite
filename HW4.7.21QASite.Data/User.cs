@@ -11,5 +11,7 @@ namespace HW4._7._21QASite.Data
         public string Email { get; set;  }
         public string HashPassword { get; set; }
         public List<Answer> Answers { get; set; }
+        public List<Likes> Likes { get; set; }
+
     }
 }
