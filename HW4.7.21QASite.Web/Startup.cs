@@ -12,6 +12,8 @@ namespace HW4._7._21QASite.Web
 {
     public class Startup
     {
+        private string _cookieScheme = "Auth";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,6 +24,12 @@ namespace HW4._7._21QASite.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(_cookieScheme)
+            .AddCookie(_cookieScheme, options =>
+            {
+             options.LoginPath = "/account/login";
+             });
+            services.AddSession();
             services.AddControllersWithViews();
         }
 
@@ -38,7 +46,12 @@ namespace HW4._7._21QASite.Web
             }
             app.UseStaticFiles();
 
+
             app.UseRouting();
+            app.UseSession();
+
+            app.UseAuthentication();
+
 
             app.UseAuthorization();
 

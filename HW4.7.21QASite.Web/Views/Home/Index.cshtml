@@ -15,7 +15,6 @@
                             </a>
                         </h4>
                         <div>
-                            @*test if it's not supposed to show the word tags if there are no tags*@
                             <span>Tags:</span>
                             @foreach (QuestionsTags questionTag in question.QuestionsTags)
                             {
@@ -23,8 +22,7 @@
                             }
                         </div>
                         <div style="margin-top: 10px;">
-                            @*fix this up and make it a ternery operator?*@ 
-                            @if (question.QuestionDescription.Length > 200)
+                            @if (question.QuestionDescription != null && question.QuestionDescription.Length > 200)
                             {
                                 @question.QuestionDescription.Substring(0, 200)
                                 <text>...</text>

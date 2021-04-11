@@ -6,24 +6,19 @@ using System.Threading.Tasks;
 using HW4._7._21QASite.Data;
 using Microsoft.Extensions.Configuration;
 using HW4._7._21QASite.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HW4._7._21QASite.Web.Controllers
 {
     public class QuestionsController : Controller
     {
-        //private readonly IConfiguration _configuration;
         private readonly string _connectionString;
         public QuestionsController(IConfiguration configuration)
         {
-           // _configuration = configuration;
             _connectionString = configuration.GetConnectionString("ConStr");
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
-
+        [Authorize]
         public IActionResult AskAQuestion()
         {
             return View();
@@ -31,8 +26,7 @@ namespace HW4._7._21QASite.Web.Controllers
 
         public IActionResult Add(Question question, List<string> tags)
         {
-            //add the user id after the login system is set up
-            //question.UserId ==
+            question.UserId = GetCurrentUserId().Value;
             question.DatePosted = DateTime.Now;
             var repo = new QuestionsRepository(_connectionString);
             repo.AddQuestion(question, tags);
@@ -42,10 +36,9 @@ namespace HW4._7._21QASite.Web.Controllers
         public IActionResult ViewQuestion (int id)
         {
             var repo = new QuestionsRepository(_connectionString);
-            var vm = new ViewQuestionViewModel()
-            {
-                Question = repo.GetQuestionById(id)
-            };
+            var vm = new ViewQuestionViewModel();
+            vm.Question = repo.GetQuestionById(id);
+            vm.AskedBy = repo.GetUserNameById(vm.Question.UserId);
             return View(vm);
         }
 
@@ -56,6 +49,23 @@ namespace HW4._7._21QASite.Web.Controllers
             repo.AddAnswer(answer);
             return this.RedirectToAction
   ("ViewQuestion", new { id = $"{answer.QuestionId}" });
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var repo = new QuestionsRepository(_connectionString);
+            if (!User.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
+            var user = repo.GetByEmail(User.Identity.Name);
+            if(user == null)
+            {
+                return null;
+            }
+
+            return user.Id;
         }
         
     }

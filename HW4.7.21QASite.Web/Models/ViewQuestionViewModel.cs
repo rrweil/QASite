@@ -9,5 +9,6 @@ namespace HW4._7._21QASite.Web.Models
     public class ViewQuestionViewModel
     {
         public Question Question { get; set; }
+        public string AskedBy { get; set; }
     }
 }

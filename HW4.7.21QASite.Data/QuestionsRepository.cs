@@ -28,7 +28,6 @@ namespace HW4._7._21QASite.Data
                 Name = name
             });
             ctx.SaveChanges();
-            //only return the id 
             return ctx.Tags.FirstOrDefault(t => t.Name == name).Id;
         }
 
@@ -42,7 +41,6 @@ namespace HW4._7._21QASite.Data
             {
                 Tag t = GetTag(tag);
                 int tagId;
-                //try this as an ternary operator
                 if(t == null)
                 {
                     tagId = AddTag(tag);
@@ -63,7 +61,6 @@ namespace HW4._7._21QASite.Data
 
         public List<Question> GetQuestions()
         {
-            //optimize this query? (only need the count of answers not all the answer information)
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Questions
                 .Include(q => q.Answers)
@@ -77,7 +74,10 @@ namespace HW4._7._21QASite.Data
         {
             var ctx = new QuestionsTagsContext(_connectionString);
             return ctx.Questions
-                .Include(q => q.Answers)
+                //.Include(q => q.Answers)
+                //.ThenInclude (a => a.User)
+                .Include(q => q.QuestionsTags)
+                .ThenInclude (qt => qt.Tag)
                 .FirstOrDefault(q => q.Id == id);
         }
 
@@ -86,6 +86,37 @@ namespace HW4._7._21QASite.Data
             var ctx = new QuestionsTagsContext(_connectionString);
             ctx.Answers.Add(answer);
             ctx.SaveChanges();
+        }
+
+        public void AddUser(User user, string password)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            user.HashPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            ctx.Users.Add(user);
+            ctx.SaveChanges();
+        }
+
+        public User Login(string email, string password)
+        {
+            var user = GetByEmail(email);
+            if (user == null)
+            {
+                return null;
+            }
+            bool isValid = BCrypt.Net.BCrypt.Verify(password, user.HashPassword);
+            return isValid ? user : null;
+        }
+
+        public User GetByEmail (string email)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            return ctx.Users.FirstOrDefault(u => u.Email == email);
+        }
+
+        public string GetUserNameById(int id)
+        {
+            var ctx = new QuestionsTagsContext(_connectionString);
+            return ctx.Users.Where(u => u.Id == id).Select(u => u.Name).FirstOrDefault();
         }
     }
 }

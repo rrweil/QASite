@@ -16,6 +16,7 @@ namespace HW4._7._21QASite.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<QuestionsTags> QuestionsTags { get; set; }
         public DbSet<Answer> Answers { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

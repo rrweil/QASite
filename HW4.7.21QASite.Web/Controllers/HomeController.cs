@@ -13,12 +13,10 @@ namespace HW4._7._21QASite.Web.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
         public HomeController(IConfiguration configuration)
         {
-           // _configuration = configuration;
             _connectionString = configuration.GetConnectionString("ConStr");
         }
         
