@@ -10,6 +10,6 @@ namespace HW4._7._21QASite.Data
         public string Name { get; set; }
         public string Email { get; set;  }
         public string HashPassword { get; set; }
-        //public List<Answer> Answers { get; set; }
+        public List<Answer> Answers { get; set; }
     }
 }

@@ -12,8 +12,8 @@ namespace HW4._7._21QASite.Data
         public int QuestionId { get; set; }
         public Question Question { get; set; }
 
-        //public int UserId { get; set; }
-        //public User User { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
 
     }
 }
